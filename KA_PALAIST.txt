@@ -1,0 +1,60 @@
+==========================================
+  KĀ PALAIST PROJEKTU LOKĀLI
+==========================================
+
+Projektam ir divas daļas, kas jāpalaiž vienlaicīgi:
+  1. Backend  — FastAPI uz portu 8000  (no mapes /backend)
+  2. Frontend — Vite uz portu 5173    (no mapes /frontend)
+
+------------------------------------------
+  PIRMS PIRMĀS PALAIŠANAS
+------------------------------------------
+
+1) Pārliecinies, ka uzstādīts Python 3.12+ un Node.js
+   - Pārbaudei:
+       python --version
+       node --version
+       npm --version
+
+2) Uzstādi backend atkarības (no repo saknes):
+       pip install -r requirements.txt
+
+3) Uzstādi frontend atkarības:
+       cd frontend
+       npm install
+
+
+------------------------------------------
+  KATRU REIZI, KAD GRIBI PALAIST
+------------------------------------------
+
+>>> 1. TERMINĀLIS — backend <<<
+
+    cd backend
+    python -m uvicorn main:app --reload --port 8000
+
+  Vajadzētu redzēt:
+    Uvicorn running on http://127.0.0.1:8000
+
+>>> 2. TERMINĀLIS — frontend <<<
+
+    cd frontend
+    npm run dev
+
+  Vajadzētu redzēt:
+    Local: http://localhost:5173/
+
+
+------------------------------------------
+  PĀRLŪKĀ
+------------------------------------------
+
+    http://localhost:5173
+
+
+------------------------------------------
+  IZSLĒGT
+------------------------------------------
+
+  Katrā terminālī nospiest Ctrl + C
+
