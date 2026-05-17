@@ -30,6 +30,10 @@ export default function IepirkumuAnalize() {
   const [ielade, setIelade] = useState(true)
   const [saglabatie, setSaglabatie] = useState<Set<string>>(new Set())
   const [aktivaisId, setAktivaisId] = useState<string | null>(null)
+  const [atjauninaDatus, setAtjauninaDatus] = useState(false)
+  const [atjauninasanasStatuss, setAtjauninasanasStatuss] = useState<
+    { veids: 'info' | 'kluda'; teksts: string } | null
+  >(null)
 
   useEffect(() => {
     Promise.all([api.cpvSaraksts(50), api.proceduras()])
@@ -94,6 +98,29 @@ export default function IepirkumuAnalize() {
     setAktivaisId(null)
   }
 
+  const atjaunotDatusKlikski = async () => {
+    setAtjauninaDatus(true)
+    setAtjauninasanasStatuss(null)
+    try {
+      const rezultats = await api.atjaunotDatus()
+      const n = rezultats.pievienotas_rindas
+      setAtjauninasanasStatuss({
+        veids: 'info',
+        teksts:
+          n === 0
+            ? 'Nav jaunu iepirkumu.'
+            : `Pievienoti ${n} jauni iepirkumi. Lai tie parādītos sarakstā, restartējiet backend.`,
+      })
+    } catch (e) {
+      setAtjauninasanasStatuss({
+        veids: 'kluda',
+        teksts: `Atjaunināšana neizdevās: ${(e as Error).message}`,
+      })
+    } finally {
+      setAtjauninaDatus(false)
+    }
+  }
+
   return (
     <>
       <TopNavBar />
@@ -104,7 +131,20 @@ export default function IepirkumuAnalize() {
             apraksts="Mašīnmācīšanās analīze, kas balstīta uz jūsu vēsturiskajiem datiem un nozari."
             darbibasUzraksts="Jauns ieteikums"
             onDarbiba={() => console.log('TODO: new recommendation')}
+            papildusPogasUzraksts={atjauninaDatus ? 'Atjaunina...' : 'Atjaunot datus'}
+            onPapildusPoga={atjaunotDatusKlikski}
+            papildusPogasAtspejota={atjauninaDatus}
           />
+
+          {atjauninasanasStatuss && (
+            <div
+              className={`${styles.atjauninasanasStatuss} ${
+                atjauninasanasStatuss.veids === 'kluda' ? styles.atjauninasanasKluda : ''
+              }`}
+            >
+              {atjauninasanasStatuss.teksts}
+            </div>
+          )}
 
           <FilterBar
             cpvVarianti={cpvVarianti}

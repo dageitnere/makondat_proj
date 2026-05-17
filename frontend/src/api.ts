@@ -43,4 +43,9 @@ export const api = {
     if (!res.ok) throw new Error(`${res.status}`)
     return res.json()
   },
+  atjaunotDatus: async () => {
+    const res = await fetch(`${BASE}/atjaunot-datus`, { method: 'POST' })
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
+    return res.json() as Promise<{ pievienotas_rindas: number }>
+  },
 }

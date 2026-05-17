@@ -1,7 +1,11 @@
+from datetime import datetime
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import random
+
+from update_data import main as atjaunot_datus_skripts
 
 app = FastAPI()
 app.add_middleware(
@@ -117,6 +121,16 @@ def iegut_statistiku():
         "max_contract_amount": round(liguma_summas.max(), 2),
         "min_contract_amount": round(liguma_summas.min(), 2)
     }
+
+@app.post("/atjaunot-datus", tags=["Procurements"])
+def atjaunot_datus():
+    try:
+        pievienotas = atjaunot_datus_skripts(gads=datetime.now().year)
+    except Exception as kludas_zinojums:
+        raise HTTPException(status_code=500, detail=str(kludas_zinojums))
+
+    return {"pievienotas_rindas": pievienotas}
+
 
 @app.post("/saglabat/{iepirkuma_id}")
 def saglabat_iepirkumu(iepirkuma_id: str):

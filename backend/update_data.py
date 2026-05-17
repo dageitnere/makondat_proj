@@ -115,7 +115,7 @@ def ieladet_izsludinatie_cpv(
     return cpv
 
 
-def main(gads: int, piespiedu_atjauninasana: bool = False) -> None:
+def main(gads: int, piespiedu_atjauninasana: bool = False) -> int:
     log.info("=== data.csv atjaunošana (gads: %d) ===", gads)
 
     # 1. HTTP sesija ar retry
@@ -162,7 +162,7 @@ def main(gads: int, piespiedu_atjauninasana: bool = False) -> None:
 
         if jaunie.empty:
             log.info("Nav jaunu ierakstu. data.csv ir aktuāls.")
-            return
+            return 0
 
         # 9. LEFT JOIN — CPV kolonnas pievienotas kur atrodams sakrītošs ID
         cpv_nonem = [k for k in ["CPV_kods_galvenais_prieksmets", "CPV_kodi_papildus_prieksmeti"] if k in jaunie.columns]
@@ -177,6 +177,7 @@ def main(gads: int, piespiedu_atjauninasana: bool = False) -> None:
         jaunie.to_csv(DATA_CSV, mode="a", index=False, header=False, encoding="utf-8")
         log.info("Pievienotas %d jaunas rindas pie data.csv.", len(jaunie))
         log.info("Gatavs.")
+        return len(jaunie)
 
 
 if __name__ == "__main__":
