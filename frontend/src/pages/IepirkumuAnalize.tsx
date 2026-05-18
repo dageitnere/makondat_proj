@@ -109,7 +109,7 @@ export default function IepirkumuAnalize() {
         teksts:
           n === 0
             ? 'Nav jaunu iepirkumu.'
-            : `Pievienoti ${n} jauni iepirkumi. Lai tie parādītos sarakstā, restartējiet backend.`,
+            : `Pievienoti ${n} jauni iepirkumi.`,
       })
     } catch (e) {
       setAtjauninasanasStatuss({
@@ -129,8 +129,6 @@ export default function IepirkumuAnalize() {
           <PageHeader
             virsraksts="Iepirkumu analīze"
             apraksts="Mašīnmācīšanās analīze, kas balstīta uz jūsu vēsturiskajiem datiem un nozari."
-            darbibasUzraksts="Jauns ieteikums"
-            onDarbiba={() => console.log('TODO: new recommendation')}
             papildusPogasUzraksts={atjauninaDatus ? 'Atjaunina...' : 'Atjaunot datus'}
             onPapildusPoga={atjaunotDatusKlikski}
             papildusPogasAtspejota={atjauninaDatus}
