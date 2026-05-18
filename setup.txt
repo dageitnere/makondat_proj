@@ -58,3 +58,11 @@ Projektam ir divas daļas, kas jāpalaiž vienlaicīgi:
 
   Katrā terminālī nospiest Ctrl + C
 
+------------------------------------------
+  DOCKER
+------------------------------------------
+1. Atveriet termināli projekta saknes mapē, kurā atrodas failu docker-compose.yml.
+2. docker --version + docker compose version
+3. docker compose up --build
+4. Pēc palaišanas atveriet: http://localhost:5173
+
