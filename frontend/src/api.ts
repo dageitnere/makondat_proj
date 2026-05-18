@@ -2,6 +2,7 @@ import type {
   FiltruParametri,
   FiltruRezultats,
   Iepirkums,
+  PrognozeRezultats,
   Statistika,
 } from './types'
 
@@ -47,5 +48,17 @@ export const api = {
     const res = await fetch(`${BASE}/atjaunot-datus`, { method: 'POST' })
     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
     return res.json() as Promise<{ pievienotas_rindas: number }>
+  },
+  prognoze: async (piegadatajs_regs_nr: string) => {
+    const res = await fetch(`${BASE}/prognoze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ piegadatajs_regs_nr }),
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({})) as { detail?: string }
+      throw new Error(err.detail ?? `${res.status} ${res.statusText}`)
+    }
+    return res.json() as Promise<PrognozeRezultats>
   },
 }

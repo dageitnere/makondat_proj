@@ -5,7 +5,7 @@ import FilterBar, { type FiltruVertibas } from '../components/FilterBar'
 import RecommendationsTable, { type TabulasRinda } from '../components/RecommendationsTable'
 import IepirkumaPanelis from '../components/IepirkumaPanelis'
 import { api } from '../api'
-import type { Iepirkums } from '../types'
+import type { Iepirkums, PrognozeRezultats } from '../types'
 import styles from './IepirkumuAnalize.module.css'
 
 const LAPAS_LIELUMS = 10
@@ -34,6 +34,10 @@ export default function IepirkumuAnalize() {
   const [atjauninasanasStatuss, setAtjauninasanasStatuss] = useState<
     { veids: 'info' | 'kluda'; teksts: string } | null
   >(null)
+  const [piegadatajs, setPiegadatajs] = useState('')
+  const [prognozeRezultats, setPrognozeRezultats] = useState<PrognozeRezultats | null>(null)
+  const [analizeDarbojas, setAnalizeDarbojas] = useState(false)
+  const [analizesKluda, setAnalizesKluda] = useState<string | null>(null)
 
   useEffect(() => {
     Promise.all([api.cpvSaraksts(50), api.proceduras()])
@@ -47,6 +51,7 @@ export default function IepirkumuAnalize() {
   }, [])
 
   useEffect(() => {
+    if (prognozeRezultats) return
     setIelade(true)
     setKluda(null)
     api
@@ -63,18 +68,26 @@ export default function IepirkumuAnalize() {
       })
       .catch((e: Error) => setKluda(e.message))
       .finally(() => setIelade(false))
-  }, [filtri, nobide])
+  }, [filtri, nobide, prognozeRezultats])
 
-  const rindas: TabulasRinda[] = useMemo(
-    () =>
-      dati
-        .map((iepirkums) => ({
-          iepirkums,
-          interese: placeholderInterese(iepirkums.Iepirkuma_ID),
-        }))
-        .filter((r) => r.interese >= filtri.slieksnis),
-    [dati, filtri.slieksnis]
-  )
+  const visasPrognozeRindas: TabulasRinda[] = useMemo(() => {
+    if (!prognozeRezultats) return []
+    return prognozeRezultats.prognozes
+      .map((p) => ({ iepirkums: p as Iepirkums, interese: p.varbatiba }))
+      .filter((r) => r.interese >= filtri.slieksnis)
+  }, [prognozeRezultats, filtri.slieksnis])
+
+  const rindas: TabulasRinda[] = useMemo(() => {
+    if (prognozeRezultats) {
+      return visasPrognozeRindas.slice(nobide, nobide + LAPAS_LIELUMS)
+    }
+    return dati
+      .map((iepirkums) => ({
+        iepirkums,
+        interese: placeholderInterese(iepirkums.Iepirkuma_ID),
+      }))
+      .filter((r) => r.interese >= filtri.slieksnis)
+  }, [dati, prognozeRezultats, visasPrognozeRindas, nobide, filtri.slieksnis])
 
   const mekletKlikski = (vertibas: FiltruVertibas) => {
     setFiltri(vertibas)
@@ -92,6 +105,28 @@ export default function IepirkumuAnalize() {
 
   const atvertKlikski = (id: string) => {
     setAktivaisId(id)
+  }
+
+  const analizetKlikski = async () => {
+    if (!piegadatajs.trim()) return
+    setAnalizeDarbojas(true)
+    setAnalizesKluda(null)
+    setPrognozeRezultats(null)
+    setNobide(0)
+    try {
+      const rezultats = await api.prognoze(piegadatajs.trim())
+      setPrognozeRezultats(rezultats)
+      setNobide(0)
+    } catch (e) {
+      setAnalizesKluda((e as Error).message)
+    } finally {
+      setAnalizeDarbojas(false)
+    }
+  }
+
+  const notirit = () => {
+    setPrognozeRezultats(null)
+    setAnalizesKluda(null)
   }
 
   const aizvertPaneli = () => {
@@ -144,6 +179,43 @@ export default function IepirkumuAnalize() {
             </div>
           )}
 
+          <div className={styles.analize}>
+            <div className={styles.analizeIeeja}>
+              <input
+                className={styles.analizeInput}
+                type="text"
+                placeholder="Piegādātāja reģistrācijas nr. (piemēram 40003575567)"
+                value={piegadatajs}
+                onChange={(e) => setPiegadatajs(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && analizetKlikski()}
+                disabled={analizeDarbojas}
+              />
+              <button
+                className={styles.analizeBtn}
+                onClick={analizetKlikski}
+                disabled={analizeDarbojas || !piegadatajs.trim()}
+              >
+                {analizeDarbojas ? 'Analizē...' : 'Analizēt'}
+              </button>
+              {prognozeRezultats && (
+                <button className={styles.notirit} onClick={notirit}>
+                  Notīrīt
+                </button>
+              )}
+            </div>
+
+            {analizesKluda && (
+              <div className={styles.analizesKluda}>{analizesKluda}</div>
+            )}
+
+            {prognozeRezultats && (
+              <div className={styles.analizesInfo}>
+                Analīze aktīva — {prognozeRezultats.uzvaras_skaits} vēsturiski uzvarēti iepirkumi.
+                Rāda {visasPrognozeRindas.length} ieteikumus (no {prognozeRezultats.prognozes.length} kopā).
+              </div>
+            )}
+          </div>
+
           <FilterBar
             cpvVarianti={cpvVarianti}
             procedurasVarianti={procedurasVarianti}
@@ -161,7 +233,7 @@ export default function IepirkumuAnalize() {
           ) : (
             <RecommendationsTable
               rindas={rindas}
-              kopskaits={kopskaits}
+              kopskaits={prognozeRezultats ? visasPrognozeRindas.length : kopskaits}
               nobide={nobide}
               limits={LAPAS_LIELUMS}
               onAtpakal={() => setNobide((n) => Math.max(0, n - LAPAS_LIELUMS))}
@@ -181,6 +253,13 @@ export default function IepirkumuAnalize() {
         iepirkumaId={aktivaisId}
         onAizvert={aizvertPaneli}
         onSaglabat={saglabatKlikski}
+        ieladetsIepirkums={
+          prognozeRezultats && aktivaisId
+            ? (prognozeRezultats.prognozes.find(
+                (p) => String(p.Iepirkuma_ID) === aktivaisId
+              ) ?? null)
+            : null
+        }
       />
     </>
   )
