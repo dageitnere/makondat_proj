@@ -56,6 +56,16 @@ export interface Statistika {
   min_contract_amount: number
 }
 
+export interface PrognozeRinda extends Iepirkums {
+  varbatiba: number
+}
+
+export interface PrognozeRezultats {
+  piegadatajs: string
+  uzvaras_skaits: number
+  prognozes: PrognozeRinda[]
+}
+
 export interface FiltruParametri {
   key?: string
   cpv_kods?: string

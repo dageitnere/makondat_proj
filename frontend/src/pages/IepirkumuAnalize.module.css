@@ -39,3 +39,96 @@
   font-size: 12px;
   font-weight: 600;
 }
+
+.atjauninasanasStatuss {
+  padding: 10px 14px;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  background: #f5f5f7;
+  color: var(--color-text);
+  border: 1px solid var(--color-border, #e4e4e7);
+}
+
+.atjauninasanasKluda {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+/* --- Piegādātāja analīze --- */
+
+.analize {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+}
+
+.analizeIeeja {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.analizeInput {
+  flex: 1;
+  min-width: 240px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  outline: none;
+}
+
+.analizeInput:focus {
+  border-color: var(--color-primary);
+}
+
+.analizeBtn {
+  padding: 8px 18px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.analizeBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.notirit {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+}
+
+.notirit:hover {
+  background: #f5f5f7;
+}
+
+.analizesKluda {
+  font-size: 13px;
+  color: #991b1b;
+  padding: 6px 10px;
+  background: #fef2f2;
+  border-radius: var(--radius-lg);
+}
+
+.analizesInfo {
+  font-size: 13px;
+  color: var(--color-primary);
+  font-weight: 500;
+}

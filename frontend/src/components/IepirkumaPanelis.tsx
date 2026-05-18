@@ -7,15 +7,21 @@ export interface IepirkumaPanelisProps {
   iepirkumaId: string | null
   onAizvert: () => void
   onSaglabat: (id: string) => void
+  ieladetsIepirkums?: Iepirkums | null
 }
 
-export default function IepirkumaPanelis({ iepirkumaId, onAizvert, onSaglabat }: IepirkumaPanelisProps) {
+export default function IepirkumaPanelis({ iepirkumaId, onAizvert, onSaglabat, ieladetsIepirkums }: IepirkumaPanelisProps) {
   const [iepirkums, setIepirkums] = useState<Iepirkums | null>(null)
   const [ielade, setIelade] = useState(false)
   const [kluda, setKluda] = useState<string | null>(null)
 
   useEffect(() => {
     if (!iepirkumaId) return
+    // Ja dati jau ir nodoti — lieto tos, nevis ielādē no API
+    if (ieladetsIepirkums) {
+      setIepirkums(ieladetsIepirkums)
+      return
+    }
     setIelade(true)
     setKluda(null)
     setIepirkums(null)
@@ -24,7 +30,7 @@ export default function IepirkumaPanelis({ iepirkumaId, onAizvert, onSaglabat }:
       .then((it) => setIepirkums(it))
       .catch((e: Error) => setKluda(e.message))
       .finally(() => setIelade(false))
-  }, [iepirkumaId])
+  }, [iepirkumaId, ieladetsIepirkums])
 
   // Esc aizver paneli
   useEffect(() => {

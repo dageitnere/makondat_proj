@@ -1,3 +1,8 @@
 fastapi
 uvicorn
 pandas
+requests
+filelock
+numpy
+scikit-learn
+xgboost

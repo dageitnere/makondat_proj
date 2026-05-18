@@ -87,7 +87,11 @@ export default function FilterBar({ cpvVarianti, procedurasVarianti, onMeklet }:
           max={100}
           step={5}
           value={slieksnis}
-          onChange={(e) => setSlieksnis(Number(e.target.value))}
+          onChange={(e) => {
+            const jaunais = Number(e.target.value)
+            setSlieksnis(jaunais)
+            onMeklet({ atslegvardi, cpv, procedura, slieksnis: jaunais })
+          }}
         />
       </div>
 
