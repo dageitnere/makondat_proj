@@ -68,32 +68,6 @@ Atver pārlūkā: **http://localhost:5173**
 
 ---
 
-## Projekta struktūra
-
-```
-├── backend/
-│   ├── main.py          # FastAPI lietotne, visi API galapunkti
-│   ├── update_data.py   # Datu lejupielāde no data.gov.lv
-│   ├── data.csv         # Iepirkumu rezultātu dati
-│   └── cache/           # Kešotie izsludināto iepirkumu CSV faili
-├── frontend/
-│   ├── src/
-│   │   ├── pages/
-│   │   │   └── IepirkumuAnalize.tsx   # Galvenā lapa
-│   │   ├── components/
-│   │   │   ├── TopNavBar.tsx
-│   │   │   ├── FilterBar.tsx
-│   │   │   ├── RecommendationsTable.tsx
-│   │   │   └── IepirkumaPanelis.tsx
-│   │   ├── api.ts       # API klients
-│   │   └── types.ts     # TypeScript tipi
-│   └── vite.config.ts
-├── docker-compose.yml
-└── requirements.txt
-```
-
----
-
 ## API galapunkti
 
 | Metode | Ceļš | Apraksts |
